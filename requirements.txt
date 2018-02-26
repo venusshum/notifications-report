@@ -1,0 +1,20 @@
+Flask==0.12.2
+Flask-Migrate==2.1.1
+Flask-SQLAlchemy==2.3.2
+SQLAlchemy-Utils==0.32.21
+SQLAlchemy==1.2.2
+Flask-SQLAlchemy==2.3.2
+psycopg2==2.7.3.2
+celery==3.1.25
+gunicorn==19.7.1
+boto3==1.5.2
+cubes==1.1
+
+
+# PaaS
+awscli==1.14.38
+awscli-cwlogs>=1.4,<1.5
+
+git+https://github.com/alphagov/notifications-utils.git@23.6.2#egg=notifications-utils==23.6.2
+
+git+https://github.com/alphagov/boto.git@2.43.0-patch3#egg=boto==2.43.0-patch3

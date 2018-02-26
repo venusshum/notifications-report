@@ -1,0 +1,22 @@
+---
+buildpack: python_buildpack
+health-check-type: none
+no-route: true
+services:
+  - notify-reports
+instances: 1
+memory: 1G
+
+env:
+  NOTIFICATION_QUEUE_PREFIX: null
+  AWS_ACCESS_KEY_ID: null
+  AWS_SECRET_ACCESS_KEY: null
+
+applications:
+  - name: notify-reports-delivery-worker
+    command: scripts/run_app_paas.sh celery -A run_celery.notify_celery worker --loglevel=INFO --concurrency=1 -Q reports-database-tasks
+    instances: 1
+    memory: 128M
+    env:
+      NOTIFY_APP_NAME: delivery-worker-report
+
