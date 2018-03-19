@@ -7,8 +7,7 @@ from app import notify_workspace
 
 cubes_blueprint = Blueprint(
     'cubes_browser',
-    __name__,
-    url_prefix='/cubes'
+    __name__
 )
 
 CUBE_NAME="ft_billing"
@@ -17,6 +16,10 @@ CUBE_NAME="ft_billing"
 @cubes_blueprint.route('', methods=['GET', 'POST'])
 @cubes_blueprint.route("/<dim_name>")
 def report(dim_name=None):
+    print('dim_name', dim_name)
+    print(str(request.url_root))
+    print(str(request.url))
+    print(str(request.base_url))
     browser = notify_workspace.browser(CUBE_NAME)
     cube = browser.cube
     if not dim_name:
@@ -69,7 +72,6 @@ def report(dim_name=None):
 
     is_last = hierarchy.is_last(next_level)
     # Finally, we render it
-
     return render_template('report.html',
                             dimensions=cube.dimensions,
                             dimension=dimension,

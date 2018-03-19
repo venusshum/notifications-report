@@ -2,26 +2,26 @@
   "cubes": [
       {
           "name": "ft_billing",
-          "dimensions": ["dm_service", "dm_datetime", "dm_template"],
+          "dimensions": ["dm_service_year", "dm_datetime", "dm_template", "rate_multiplier", "provider", "notification_type"],
           "joins": [
-              {"master":"dm_service", "detail":"dm_service.service_id"},
+              {"master":"dm_service_year", "detail":"dm_service_year.id"},
               {"master":"dm_datetime", "detail":"dm_datetime.bst_date"},
               {"master":"dm_template", "detail":"dm_template.template_id"}
           ],
           "measures": [
-            {"name":"billable_unit", "label":"billable_unit"},
-            {"name":"billing_total", "label":"billing_total"}
+            {"name":"billable_units", "label":"billable_units"},
+            {"name":"notifications_sent", "label":"Notifications_sent"}
           ],
           "aggregates": [
                     {
                         "name": "amount_sum",
                         "function": "sum",
-                        "measure": "billable_unit"
+                        "measure": "billable_units"
                     },
                     {
-                        "name": "billing_sum",
+                        "name": "total_sent",
                         "function": "sum",
-                        "measure": "billing_total"
+                        "measure":"notifications_sent"
                     },
                     {
                         "name": "record_count",
@@ -29,33 +29,38 @@
                     }
           ],
           "mappings": {
-            "service_name": "dm_service.service_name"
+            "service_name": "dm_service_year.service_name"
           }
       }
   ],
   "dimensions": [
-      {"name": "dm_service",
+      {"name": "dm_service_year",
        "levels":[
+         {"name": "service_id", "attributes": ["service_id"] },
          {"name": "crown", "attributes": ["crown"] },
+         {"name": "year", "attributes": ["crown"] },
          {"name": "service_name", "attributes": ["service_name"], "label":"Service name"},
          {"name": "organisation_type", "attributes": ["organisation_type"], "label":"Organisation Type"},
          {"name": "organisation", "attributes": ["organisation"], "label":"Organisation Name"}
        ],
        "hierarchies":[
          {"name":"cs", "levels":["crown", "organisation_type", "service_name"]},
-         {"name":"org", "levels":["crown", "organisation", "service_name"]}
+         {"name":"org", "levels":["organisation", "service_name"]},
+         {"name":"id", "levels":["service_id", "year"]}
        ],
-        "default_hierarchy_name": "cs",
+        "default_hierarchy_name": "id",
        "label":"Services"
      },
      {"name": "dm_datetime",
        "levels":[
         { "name": "year", "attributes": ["year"] },
-        { "name": "month", "attributes": ["monthname"] },
+        { "name": "month", "attributes": ["month_name"] },
+        { "name": "month_num", "attributes": ["month"] },
         { "name": "day", "attributes": ["bst_day"] }
        ],
        "hierarchies":[
-        {"name": "ymd", "levels":["year", "month", "day"]}
+        {"name": "ymd", "levels":["year", "month_num", "day"]},
+         {"name": "ymdn", "levels":["year", "month", "day"]}
       ],
       "label":"Date"
      },
@@ -68,6 +73,9 @@
         {"name": "tt", "levels":["type", "template_name"]}
       ],
       "label":"Template"
-     }
+     },
+    {"name": "rate_multiplier", "label": "Rate multiplier"},
+    {"name": "provider", "label": "Provider"},
+    {"name": "notification_type", "label": "Notification Type"}
   ]
 }

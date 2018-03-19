@@ -1,0 +1,29 @@
+---
+buildpack: python_buildpack
+command: scripts/run_app_paas.sh gunicorn -b 0.0.0.0:$PORT application
+services:
+  - notify-reports
+env:
+  NOTIFY_APP_NAME: notify-reports-api
+  CW_APP_NAME: reports
+  # required by cf run-task
+  FLASK_APP: application.py
+
+  # Credentials variables
+
+applications:
+  - name: notify-reports-api
+    command: scripts/run_app_paas.sh gunicorn application
+
+  - name: notify-reports-db-migration
+    command: sleep infinity
+    no-route: true
+    health-check-type: none
+    instances: 1
+    memory: 128M
+
+routes:
+  - route: notify-reports-prod.cloudapps.digital
+
+instances: 1
+memory: 128M

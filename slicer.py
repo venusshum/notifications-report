@@ -6,9 +6,9 @@ from flask import Flask
 from app import create_slicer
 
 
-application = Flask('app')
+# application = Flask('app')
 
-application = create_slicer(application)
+application = create_slicer()
 
 
 # from cubes.server.blueprint import slicer

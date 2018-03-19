@@ -14,19 +14,22 @@ down_revision = '0002_create_dm_tables'
 
 
 def upgrade():
+
     # Create notifications_for_today table
     op.create_table('notifications_for_today',
                     sa.Column('notification_id', postgresql.UUID(as_uuid=True), nullable=True),
                     sa.Column('dm_template', postgresql.UUID(as_uuid=True), nullable=True),
                     sa.Column('dm_datetime', sa.Date(), nullable=True),
-                    sa.Column('dm_service', postgresql.UUID(as_uuid=True), nullable=True),
-                    sa.Column('notification_type', sa.Enum('email', 'sms', 'letter', name='notification_type'), nullable=True),
+                    sa.Column('dm_service_year', postgresql.UUID(as_uuid=True), nullable=True),
+                    #sa.Column('notification_type', sa.Enum('email', 'sms', 'letter', name='notification_type'), nullable=True),
+                    sa.Column('notification_type', sa.Text(), nullable=True),
                     sa.Column('provider', sa.Text(), nullable=True),
+                    sa.Column('crown', sa.Text(), nullable=True),
                     sa.Column('rate_multiplier', sa.Numeric(), nullable=True),
                     sa.Column('international', sa.Boolean(), nullable=True),
                     sa.Column('provider_rate', sa.Numeric(), nullable=True),
                     sa.Column('client_rate', sa.Numeric(), nullable=True),
-                    sa.Column('billable_unit', sa.Numeric(), nullable=True),
+                    sa.Column('billable_units', sa.Numeric(), nullable=True),
                     sa.Column('notifications_sent', sa.Integer(), nullable=True),
                     sa.PrimaryKeyConstraint('dm_template', 'dm_datetime', 'rate_multiplier')
                     )
@@ -35,20 +38,21 @@ def upgrade():
     op.create_table('ft_billing',
                     sa.Column('dm_template', postgresql.UUID(as_uuid=True), nullable=True),
                     sa.Column('dm_datetime', sa.Date(), nullable=True),
-                    sa.Column('dm_service', postgresql.UUID(as_uuid=True), nullable=True),
+                    sa.Column('service', postgresql.UUID(as_uuid=True), nullable=True),
+                    sa.Column('annual_billing')
                     sa.Column('notification_type', sa.Text(), nullable=True),
                     sa.Column('provider', sa.Text(), nullable=True),
+                    sa.Column('crown', sa.Text(), nullable=True),
                     sa.Column('rate_multiplier', sa.Numeric(), nullable=True),
                     sa.Column('international', sa.Boolean(), nullable=True),
-                    sa.Column('provider_rate', sa.Numeric(), nullable=True),
-                    sa.Column('client_rate', sa.Numeric(), nullable=True),
-                    sa.Column('billable_unit', sa.Numeric(), nullable=True),
+                    sa.Column('rate', sa.Numeric(), nullable=True),
+                    sa.Column('billable_units', sa.Numeric(), nullable=True),
                     sa.Column('notifications_sent', sa.Integer(), nullable=True),
-                    sa.Column('billing_total', sa.Numeric(), nullable=True),
-                    sa.PrimaryKeyConstraint('dm_template', 'dm_datetime', 'rate_multiplier')
+                    #sa.Column('billing_total', sa.Numeric(), nullable=True),
+                    # sa.PrimaryKeyConstraint('dm_template', 'dm_datetime', 'rate_multiplier')
                     )
 
-
 def downgrade():
+    op.execute("drop type if exists notification_type cascade")
     op.drop_table('notifications_for_today')
     op.drop_table('ft_billing')

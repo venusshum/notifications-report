@@ -1,0 +1,22 @@
+---
+buildpack: python_buildpack
+command: scripts/run_app_paas.sh gunicorn -b 0.0.0.0:$PORT slicer
+services:
+  - notify-db-old
+env:
+  NOTIFY_APP_NAME: notify-reports-slicer
+  CW_APP_NAME: reports
+  # required by cf run-task
+  FLASK_APP: slicer.py
+
+  # Credentials variables
+
+applications:
+  - name: notify-reports-slicer
+    command: scripts/run_app_paas.sh gunicorn slicer
+
+routes:
+  - route: notify-reports-slicer-staging.cloudapps.digital
+
+instances: 1
+memory: 128M

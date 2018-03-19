@@ -52,7 +52,25 @@ def create_slicer_config():
     return config
 
 
-def create_slicer(application):
+def create_cubes_config():
+    import configparser
+    config = configparser.ConfigParser()
+
+    config['server'] = {
+                        # 'host': 'localhost',
+                        # 'port': os.environ['PORT'], # no need check port number when run using flask run
+                        'reload': 'yes',
+                        'log_level': 'info'}
+    config['workspace'] = {'models_path': './app',
+                        'log_level': 'debug'}
+    config['model'] = {'path': 'model.json'}
+    config['store'] = {'type': 'sql',
+                        'schema': 'public',
+                        'url': os.environ['SQLALCHEMY_DATABASE_URI']}
+    return config
+
+
+def create_slicer():
     from app.config import configs
     from cubes.server.base import run_server, create_server
 
@@ -62,31 +80,38 @@ def create_slicer(application):
     return application
 
 
+
 def register_blueprint(application):
     from app.rest.test import test_blueprint
     from app.cubes_browser.rest import cubes_blueprint
-    from cubes.server import slicer
-    from cubes.compat import ConfigParser
+    # from cubes.server import slicer
+    # from cubes.compat import ConfigParser
 
-    notify_workspace.register_default_store("sql", url="postgresql://venusbailey@localhost:5432/notify_reports",
+    notify_workspace.register_default_store("sql", url=os.environ['SQLALCHEMY_DATABASE_URI'],
                                             schema="public")
     notify_workspace.import_model("app/model.json")
 
     # updating_blueprint.before_request()
     application.register_blueprint(test_blueprint)
-    application.register_blueprint(cubes_blueprint)
+    application.register_blueprint(cubes_blueprint, url_prefix='/cubes')
 
     # Slice server
-    settings = ConfigParser()
-    settings.read("slicer.ini")
-    application.register_blueprint(slicer, url_prefix="/slicer", config=settings)
+    # settings = ConfigParser()
+    # settings.read("slicer.ini")
+    # config=create_cubes_config()
+    # application.register_blueprint(slicer, url_prefix="/slicer", config=config)
 
     # This is an example app
-    @application.route('/get_data_by_year')
+    from flask import request
+    @application.route('/get_data_by_year', methods=['GET', 'POST'])
     def get_data():
+        if 'drilldown' in request.args:
+          drilldown = request.args.get('drilldown')
+        else:
+          drilldown = 'month'
         browser = notify_workspace.browser("ft_billing")
         cube = browser.cube
-        result = browser.aggregate(drilldown=["dm_datetime:year"])
+        result = browser.aggregate(drilldown=["dm_datetime:{}".format(drilldown)])
         return_str = ''
         for record in result:
             return_str = return_str + str(record) + '<br>'

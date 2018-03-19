@@ -23,9 +23,11 @@ def upgrade():
                     )
 
     # Create dm_service table - recreate all the columns in operation DB
-    op.create_table('dm_service',
+    op.create_table('dm_service_year',
+                    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
                     sa.Column('service_id', postgresql.UUID(as_uuid=True), nullable=False),
                     sa.Column('service_name', sa.String(), nullable=True),
+                    sa.Column('financial_year', sa.Integer(), nullable=True),
                     sa.Column('organisation', sa.Text(), nullable=True),
                     sa.Column('crown', sa.Text(), nullable=True),
                     sa.Column('research_mode', sa.Boolean(), nullable=True),
@@ -35,14 +37,16 @@ def upgrade():
                     sa.Column('updated_at', sa.DateTime(), nullable=True),
                     sa.Column('email_from', sa.String(), nullable=True),
                     sa.Column('organisation_type', sa.Text, nullable=True),
-                    sa.PrimaryKeyConstraint('service_id')
+                    sa.Column('free_sms_fragment_limit', sa.Integer(), nullable=True)
+                    # sa.PrimaryKeyConstraint('id')
                     )
 
     # Create dm_template table
     op.create_table('dm_template',
                     sa.Column('template_id', postgresql.UUID(as_uuid=True), nullable=False),
                     sa.Column('template_name', sa.String(), nullable=True),
-                    sa.Column('type', sa.Enum('email', 'sms', 'letter', name='template_type'), nullable=True),
+                    sa.Column('type', sa.Text(), nullable=True),
+                    #sa.Column('type', sa.Text(), nullable=True),
                     sa.Column('service_id', postgresql.UUID(as_uuid=True), nullable=True),
                     sa.PrimaryKeyConstraint('template_id'),
                     sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -51,7 +55,7 @@ def upgrade():
                     )
 
 def downgrade():
-    op.execute("drop type if exists template_types cascade")
+    op.execute("drop type if exists template_type cascade")
     op.drop_table('dm_template')  # drop template first because it has a foreign key on dm_service
-    op.drop_table('dm_service')
+    op.drop_table('dm_service_year')
     op.drop_table('dm_organisation')

@@ -1,1 +1,0 @@
-python ./browser/application.py

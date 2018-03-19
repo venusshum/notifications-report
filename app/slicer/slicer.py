@@ -20,10 +20,3 @@ def create_config(application):
                         'password': 'pass',     # TODO: Replace with secret from OS
                         'url': str(application.config.get('SQLALCHEMY_DATABASE_URI'))}
     return config
-
-
-
-# def start_slicer():
-#     # execute only if run as a script
-#     config = create_config()
-#     run_server(config=config, debug=True)
