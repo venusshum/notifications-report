@@ -72,7 +72,7 @@
     <tr><th>{{next_level.label or next_level.name}}</th><th>Notifications Sent</th><th>Billable units</th></tr>
     </thead>
     <tbody>
-    {% for row in result.table_rows(dimension) %}
+    {% for row in result.table_rows(dimension)|sort() %}
     <tr>
         <td>
         {% if is_last %}
@@ -83,13 +83,13 @@
         </a>
         {% endif %}
         </td>
-        <td>{{row.record.total_sent}}</td>
-        <td>{{row.record.amount_sum}}</td>
+        <td>{{row.record.sum_notifications_sent}}</td>
+        <td>{{row.record.sum_billable_units}}</td>
     </tr>
     {% endfor %}
     <tr><th>Total</th>
-        <th>{{result.summary.total_sent}}</th>
-        <th>{{result.summary.amount_sum}}</th>
+        <th>{{result.summary.sum_notifications_sent}}</th>
+        <th>{{result.summary.sum_billable_units}}</th>
     </tbody>
 </table>
 

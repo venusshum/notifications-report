@@ -39,7 +39,6 @@ def upgrade():
                     sa.Column('dm_template', postgresql.UUID(as_uuid=True), nullable=True),
                     sa.Column('dm_datetime', sa.Date(), nullable=True),
                     sa.Column('service', postgresql.UUID(as_uuid=True), nullable=True),
-                    sa.Column('annual_billing')
                     sa.Column('notification_type', sa.Text(), nullable=True),
                     sa.Column('provider', sa.Text(), nullable=True),
                     sa.Column('crown', sa.Text(), nullable=True),

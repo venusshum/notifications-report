@@ -6,6 +6,15 @@ records
 
 Basic Flask/Celery python app.
 
+
+## This was an unfinished prototype. A copy of running app has been put in preview.
+
+This app contains
+* A python cubes app
+* A python slicer
+* celery task worker
+
+
 ## Setting Up
 
 ### AWS credentials
@@ -34,10 +43,15 @@ Flask endpoints - for Report database statistic queries
 scripts/run_app.sh
 ```
 
+After running the app, you should have an http service running locally at http://127.0.0.1:6018/cubes
+
 Celery queue reader - to start celery workers which consumes tasks from SQS, posted originally from API.
 ```
 scripts/run_celery.sh
 ```
+
+## Database version
+The Cubes model was built based on the api database migration version '0184_alter_primary_key_1'.
 
 
 ##  To test the application

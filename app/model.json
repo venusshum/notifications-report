@@ -2,54 +2,54 @@
   "cubes": [
       {
           "name": "ft_billing",
-          "dimensions": ["dm_service_year", "dm_datetime", "dm_template", "rate_multiplier", "provider", "notification_type"],
+          "dimensions": ["dm_datetime", "templates", "services", "notification_type", "provider", "rate_multiplier"],
           "joins": [
-              {"master":"dm_service_year", "detail":"dm_service_year.id"},
-              {"master":"dm_datetime", "detail":"dm_datetime.bst_date"},
-              {"master":"dm_template", "detail":"dm_template.template_id"}
+              {"master":"service_id", "detail":"services.id"},
+              {"master":"bst_date", "detail":"dm_datetime.bst_date"},
+              {"master":"template_id", "detail":"templates.id"}
           ],
           "measures": [
+            {"name":"rate", "label":"rate"},
             {"name":"billable_units", "label":"billable_units"},
             {"name":"notifications_sent", "label":"Notifications_sent"}
           ],
           "aggregates": [
                     {
-                        "name": "amount_sum",
+                        "name": "sum_billable_units",
                         "function": "sum",
                         "measure": "billable_units"
                     },
                     {
-                        "name": "total_sent",
+                        "name": "sum_notifications_sent",
                         "function": "sum",
                         "measure":"notifications_sent"
                     },
                     {
-                        "name": "record_count",
+                        "name": "row_count",
                         "function": "count"
+                    },
+                    {
+                        "name": "max_rate",
+                        "function": "max",
+                        "measure":"rate"
                     }
           ],
           "mappings": {
-            "service_name": "dm_service_year.service_name"
+            "service_name": "service.name",
+            "crown": "service.crown",
+            "template_name": "template.name"
           }
       }
   ],
   "dimensions": [
-      {"name": "dm_service_year",
+      {"name": "services",
        "levels":[
-         {"name": "service_id", "attributes": ["service_id"] },
+         {"name": "id", "attributes": ["id"]},
          {"name": "crown", "attributes": ["crown"] },
-         {"name": "year", "attributes": ["crown"] },
-         {"name": "service_name", "attributes": ["service_name"], "label":"Service name"},
-         {"name": "organisation_type", "attributes": ["organisation_type"], "label":"Organisation Type"},
-         {"name": "organisation", "attributes": ["organisation"], "label":"Organisation Name"}
+         {"name": "service_name", "attributes": ["name"], "label":"Service name"},
+         {"name": "organisation_type", "attributes": ["organisation_type"], "label":"Organisation type"}
        ],
-       "hierarchies":[
-         {"name":"cs", "levels":["crown", "organisation_type", "service_name"]},
-         {"name":"org", "levels":["organisation", "service_name"]},
-         {"name":"id", "levels":["service_id", "year"]}
-       ],
-        "default_hierarchy_name": "id",
-       "label":"Services"
+        "label":"Services"
      },
      {"name": "dm_datetime",
        "levels":[
@@ -60,14 +60,15 @@
        ],
        "hierarchies":[
         {"name": "ymd", "levels":["year", "month_num", "day"]},
-         {"name": "ymdn", "levels":["year", "month", "day"]}
+         {"name": "ymdn", "levels":["year", "month", "day"]},
+         {"name": "ym", "levels":["year", "month_num"]}
       ],
       "label":"Date"
      },
-     {"name": "dm_template",
+     {"name": "templates",
        "levels":[
-        { "name": "type", "attributes": ["type"] },
-        { "name": "template_name", "attributes": ["template_name"] }
+        { "name": "type", "attributes": ["template_type"] },
+        { "name": "template_name", "attributes": ["name"] }
        ],
        "hierarchies":[
         {"name": "tt", "levels":["type", "template_name"]}
